@@ -66,12 +66,12 @@ class TestWorkspaceRun:
         paths = {"libs/library-one", "libs/library-two"}
         for path in paths:
             run(["poetry", "workspace", "new", path])
-        # WHEN I run a command with exit code 2 in the first workspace
+        # WHEN I run a command with exit code 1 in the first workspace
         Path(PROJECT_ROOT / "libs/library-two" / "foo").touch()
         with pytest.raises(subprocess.CalledProcessError) as exc_info:
             run(["poetry", "workspace", "run", "ls", "foo"])
         exc = exc_info.value
-        # THEN the exit code is 2
-        assert exc.returncode == 2
+        # THEN the exit code is 1
+        assert exc.returncode == 1
         # AND the output second command still ran
         assert "Running 'poetry run ls foo' in 'libs/library-two'" in exc.stderr.decode()
