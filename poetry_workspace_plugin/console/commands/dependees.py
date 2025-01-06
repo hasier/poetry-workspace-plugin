@@ -4,7 +4,7 @@ from pathlib import Path
 
 from cleo.helpers import argument, option
 from poetry.console.commands.command import Command
-from poetry.core.pyproject.toml import PyProjectTOML
+from poetry.core.factory import Factory
 
 from poetry_workspace_plugin.helpers import get_workspaces_table
 
@@ -61,16 +61,11 @@ class WorkspaceDependeesCommand(Command):
 
     def _get_workspace_direct_dependencies(self, name: str) -> set[str]:
         path = Path(self._workspaces[name])
-        poetry_file = path / "pyproject.toml"
-        if not poetry_file.exists():
-            raise RuntimeError(f"Poetry could not find a pyproject.toml file in {path!r}")
-        pyproject = PyProjectTOML(path=poetry_file).data
-        dependencies = pyproject["tool"]["poetry"]["dependencies"]
-
+        poetry = Factory().create_poetry(cwd=path)
         result = set()
-        for key, value in dependencies.items():
-            if isinstance(value, dict) and "path" in value:
-                target_path = (path / value["path"]).resolve()
+        for dependency in poetry.package.all_requires:
+            if dependency.source_type == "directory" and dependency.source_url:
+                target_path = Path(dependency.source_url)
                 if target_path in self._workspace_absolute_paths:
                     result.add(self._workspace_absolute_paths[target_path])
         return result

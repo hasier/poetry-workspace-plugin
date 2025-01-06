@@ -3,13 +3,6 @@ from pathlib import Path
 from cleo.helpers import argument
 from poetry.console.commands.command import Command
 from poetry.core.factory import Factory
-
-try:
-    from poetry.core.pyproject.exceptions import PyProjectException as PyProjectError  # type: ignore[attr-defined]
-except ImportError:
-    # renamed in 2.0.0
-    from poetry.core.pyproject.exceptions import PyProjectError
-
 from poetry.core.pyproject.toml import PyProjectTOML
 
 from poetry_workspace_plugin.helpers import get_workspaces_table
@@ -54,19 +47,21 @@ class WorkspaceAddCommand(Command):
         pyproject = PyProjectTOML(path=poetry_file)
 
         error_message = None
-        try:
-            local_config = pyproject.poetry_config
-        except PyProjectError as exc:
-            error_message = "  - {}\n".format(str(exc))
-        else:
+        if pyproject.is_poetry_project():
             # Checking validity
-            check_result = Factory.validate(local_config)
+            check_result = Factory.validate(pyproject.data)
             if check_result["errors"]:
                 error_message = ""
                 for error in check_result["errors"]:
                     error_message += "  - {}\n".format(error)
+        else:
+            error_message = "  - Project is not a Poetry project\n"
 
         if error_message:
             raise RuntimeError(f"The Poetry configuration at {str(path)!r} is invalid:\n" + error_message)
 
-        return pyproject.data["tool"]["poetry"]["name"]
+        try:
+            return pyproject.data["tool"]["poetry"]["name"]
+        except KeyError:
+            # PEP 621
+            return pyproject.data["project"]["name"]

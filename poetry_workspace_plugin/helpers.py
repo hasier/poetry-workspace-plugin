@@ -13,6 +13,10 @@ def get_workspaces_table(pyproject: TOMLDocument) -> Table:
 
 
 def get_workspace_section(pyproject: TOMLDocument) -> Table:
+    if "tool" not in pyproject:
+        # Might be missing if formatted as PEP 621
+        pyproject["tool"] = table()
+
     tool_section = pyproject["tool"]
 
     if PLUGIN_SECTION not in tool_section:  # type: ignore
