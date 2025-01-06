@@ -1,6 +1,6 @@
+import changelog
 import toml
 
-import changelog
 import poetry_workspace_plugin as package
 
 

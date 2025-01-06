@@ -3,7 +3,13 @@ from pathlib import Path
 from cleo.helpers import argument
 from poetry.console.commands.command import Command
 from poetry.core.factory import Factory
-from poetry.core.pyproject.exceptions import PyProjectException
+
+try:
+    from poetry.core.pyproject.exceptions import PyProjectException as PyProjectError  # type: ignore[attr-defined]
+except ImportError:
+    # renamed in 2.0.0
+    from poetry.core.pyproject.exceptions import PyProjectError
+
 from poetry.core.pyproject.toml import PyProjectTOML
 
 from poetry_workspace_plugin.helpers import get_workspaces_table
@@ -50,7 +56,7 @@ class WorkspaceAddCommand(Command):
         error_message = None
         try:
             local_config = pyproject.poetry_config
-        except PyProjectException as exc:
+        except PyProjectError as exc:
             error_message = "  - {}\n".format(str(exc))
         else:
             # Checking validity
