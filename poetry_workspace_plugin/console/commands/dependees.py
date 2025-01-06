@@ -66,7 +66,7 @@ class WorkspaceDependeesCommand(Command):
         poetry_file = path / "pyproject.toml"
         if not poetry_file.exists():
             raise RuntimeError(f"Poetry could not find a pyproject.toml file in {path!r}")
-        pyproject = PyProjectTOML(path=poetry_file).file.read()
+        pyproject = PyProjectTOML(path=poetry_file).data
         dependencies = pyproject["tool"]["poetry"]["dependencies"]
 
         result = set()
@@ -83,4 +83,4 @@ class WorkspaceDependeesCommand(Command):
 
     @cached_property
     def _workspaces(self) -> dict[str, str]:
-        return get_workspaces_table(self.poetry.file.read())  # type: ignore[return-value]
+        return get_workspaces_table(self.poetry.file.read())
