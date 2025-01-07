@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "poetry-workspace-plugin"
-version = "0.1.0"
+version = "0.1.1"
 description = "Poetry workspace plugin for Python monorepos."
 authors = ["Jack Smith"]
 packages = [
