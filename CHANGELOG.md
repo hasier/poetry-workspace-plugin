@@ -13,6 +13,10 @@ Types of changes are:
 * **Fixed** for any bug fixes.
 
 ## [Unreleased]
+### Fixed
+* Account for recursive dependencies
+
+## [0.1.0]
 ### Added
 * Project started :)
 * Proof-of-concept CLI for managing multiple poetry projects as 'workspaces'.
@@ -23,7 +27,8 @@ Types of changes are:
   - `poetry workspace run` runs a command in multiple workspaces
   - `poetry workspace dependees` lists workspaces which depend on specified workspaces
 
-[Unreleased]: https://github.com/jacksmith15/poetry-workspace-plugin/compare/initial..HEAD
+[Unreleased]: https://github.com/jacksmith15/poetry-workspace-plugin/compare/ac56d87..HEAD
+[0.1.0]: https://github.com/jacksmith15/poetry-workspace-plugin/compare/initial..ac56d87
 
 [Keep a Changelog]: http://keepachangelog.com/en/1.0.0/
 [Semantic Versioning]: http://semver.org/spec/v2.0.0.html
