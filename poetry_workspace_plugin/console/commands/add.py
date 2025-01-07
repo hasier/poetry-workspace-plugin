@@ -3,7 +3,6 @@ from pathlib import Path
 from cleo.helpers import argument
 from poetry.console.commands.command import Command
 from poetry.core.factory import Factory
-from poetry.core.pyproject.toml import PyProjectTOML
 
 from poetry_workspace_plugin.helpers import get_workspaces_table
 
@@ -44,24 +43,5 @@ class WorkspaceAddCommand(Command):
         if not poetry_file.exists():
             raise RuntimeError(f"Poetry could not find a pyproject.toml file in {str(path)!r}.")
 
-        pyproject = PyProjectTOML(path=poetry_file)
-
-        error_message = None
-        if pyproject.is_poetry_project():
-            # Checking validity
-            check_result = Factory.validate(pyproject.data)
-            if check_result["errors"]:
-                error_message = ""
-                for error in check_result["errors"]:
-                    error_message += "  - {}\n".format(error)
-        else:
-            error_message = "  - Project is not a Poetry project\n"
-
-        if error_message:
-            raise RuntimeError(f"The Poetry configuration at {str(path)!r} is invalid:\n" + error_message)
-
-        try:
-            return pyproject.data["tool"]["poetry"]["name"]
-        except KeyError:
-            # PEP 621
-            return pyproject.data["project"]["name"]
+        poetry = Factory().create_poetry(path)
+        return poetry.package.name
