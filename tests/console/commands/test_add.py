@@ -71,4 +71,4 @@ class TestWorkspaceAdd:
         # THEN the exit code is 1
         assert exc.returncode == 1
         # AND the expected error message is displayed
-        assert f"The Poetry configuration at {str(path)!r} is invalid:" in exc.text, exc.text
+        assert "The Poetry configuration is invalid:" in exc.text, exc.text
