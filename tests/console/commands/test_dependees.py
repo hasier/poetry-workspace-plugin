@@ -50,6 +50,23 @@ class TestWorkspaceDependees:
         assert set(result.text.splitlines()) == {"library-two", "library-three"}
 
     @staticmethod
+    def should_identify_transitive_dependees_when_recursive():
+        # GIVEN I have four workspaces
+        paths = {"libs/library-one", "libs/library-two", "libs/library-three", "libs/library-four"}
+        for path in paths:
+            run(["poetry", "workspace", "new", path])
+        # AND the first depends on the second
+        run(["poetry", "add", "../library-two"], cwd="libs/library-one")
+        # AND the second depends on the third
+        run(["poetry", "add", "../library-three"], cwd="libs/library-two")
+        # AND the third depends on the second, e.g. as a separate testing dependency
+        run(["poetry", "add", "../library-two"], cwd="libs/library-three")
+        # WHEN I run workspace dependees on the third workspace
+        result = run(["poetry", "workspace", "dependees", "library-three"])
+        # THEN the first three should be included in the result
+        assert set(result.text.splitlines()) == {"library-one", "library-two", "library-three"}
+
+    @staticmethod
     def should_return_csv_format_when_specified():
         # GIVEN I have two workspaces
         paths = {"libs/library-one", "libs/library-two"}
