@@ -18,6 +18,10 @@ Types of changes are:
 
 ## [0.1.0]
 ### Added
+* Support for Poetry 2.x
+
+## [0.1.0]
+### Added
 * Project started :)
 * Proof-of-concept CLI for managing multiple poetry projects as 'workspaces'.
   - `poetry workspace new` creates a new workspace
