@@ -43,12 +43,14 @@ class WorkspaceDependeesCommand(Command):
             self.line(dependee)
         return 0
 
-    def _find_dependees(self, name: str, transitive: bool = True) -> set[str]:
+    def _find_dependees(self, name: str, transitive: bool = True, visited: set[str] | None = None) -> set[str]:
+        visited = visited or set()
         dependees = self._dependee_map[name]
-        if not transitive:
+        if not transitive or name in visited:
             return dependees
+        visited.add(name)
         for dependee in set(dependees):
-            dependees |= self._find_dependees(dependee)
+            dependees |= self._find_dependees(dependee, visited=visited)
         return dependees
 
     @cached_property
